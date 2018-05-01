@@ -1,0 +1,102 @@
+body {
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+}
+
+p.main {
+  font-size: 24px;
+}
+
+.sidebar {
+    background-color: #202020;
+    position: absolute;
+    left: 0px;
+    width: 25%;
+    height: 94%;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 20px;
+    font-size: 16px;
+    top: 55px;
+}
+
+#map {
+    position:absolute; bottom:0; right:0; width:75%; height: 94%; top: 55px;
+}
+
+#features {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    bottom: 200px;
+    width: 300px;
+    z-index: 2;
+    overflow: auto;
+    background: rgba(255, 255, 255, 0.8);}
+
+#map canvas {
+    cursor: crosshair;
+  }
+
+#nav{
+    color: white;
+    font-size: 20px;
+  }
+.title-side-panel{
+  z-index: 2;
+  color: #f5f5f5;
+}
+.blurb{
+  z-index: 2;
+  color: #f5f5f5;
+  font-size: 14px;
+}
+.text{
+  border:0;
+  color:#f6931f;
+  font-weight:bold;
+}
+input[type="text"], textarea {
+
+  background-color : #202020;
+
+}
+input[type="text" i] {
+    padding: 1px 0px;
+    color:#f6931f;
+}
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+/*
+#features {
+  top: 0;
+  height: 100px;
+  margin-top: 20px;
+  width: 250px;
+}
+*/
+#legend {
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 18px;
+  height: 150px;
+  margin-bottom: 40px;
+  width: 100px;
+}
+
+.legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+}
