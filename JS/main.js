@@ -14,25 +14,52 @@ var map = new mapboxgl.Map({
 });
 
 
+var overlay = document.getElementById('features-title');
 
 map.on('load', function() {
 /*
   map.removeLayer("segments_final-4isuhz");
 */
 
+map.addLayer({
+   "id": "segments_final-4isuhz",
+   "type": "line",
+   "source": 'composite',
+   "source-layer": "segments_final-4isuhz",
+   "filter": ["has","risk_score"],
+   "paint": {
+       //"line-color": `${segColor}`,
+       "line-color": [
+         "step",
+         ["get","risk_score"],
+         "#000000",
+         20,
+         "#a2ef07",
+         40,
+         "#f6f913",
+         60,
+         "#ef8e26",
+         80,
+         "#f90021"
+       ],
+       "line-width": 2.5
+}
+});
     // Create popup
     var popup = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false
     });
 
+
     map.on('mouseenter', 'segments_final-4isuhz', function(e) {
         // Change the cursor style as a UI indicator.
+
     map.getCanvas().style.cursor = 'pointer';
 
         var coordinates = e.features[0].geometry.coordinates[0].slice();
         var description = e.features[0].properties.Count_2017;
-        //_.pick(description, '') //build specific display data from radio buttons?
+
 
         // Ensure that if the map is zoomed out such that multiple
         // copies of the feature are visible, the popup appears
@@ -48,12 +75,49 @@ map.on('load', function() {
             .addTo(map);
     });
 
-    map.on('mouseleave', 'segments_final-4isuhz', function() {
-        map.getCanvas().style.cursor = '';
-        popup.remove();
-    });
+    map.on('mousemove', 'segments_final-4isuhz', function(e) {
+           // Change the cursor style as a UI indicator.
+           map.getCanvas().style.cursor = 'pointer';
+/*
+//add to features if clicked functionality
+if($('#traffic_sig')[0].checked){
+           // Single out the first found feature.
+           var feature = e.features[0].properties;
+           var pair = _.keys(_.pick(feature, "TrafficSig")) + ' : ' + _.values(_.pick(feature, "TrafficSig"));
+           console.log(feature);
+           console.log(pair);
+           overlay.innerHTML = '';
 
-//map.fitBounds([[-86, 39], [-84, 37]]);
+           var entry = document.createElement('div');
+           entry.textContent = `${pair}`;
+
+           overlay.appendChild(entry);
+           overlay.style.display = 'block';
+}
+*/
+//reminder: can filter by groups on right with if/then logic like commented above
+overlay.innerHTML = 'Selected Features';
+var feature = e.features[0].properties;
+var pairs = _.pairs(feature);
+for (i = 0; i < pairs.length; i++) {
+  var entry = document.createElement('div');
+  var text = pairs[i][0] + ' : ' + pairs[i][1];
+  console.log(text);
+  entry.textContent = `${text}`;
+  overlay.appendChild(entry);
+  overlay.style.display = 'block';
+}
+
+   });
+});
+
+
+//data to show in top right
+map.on('mouseleave', function (e) {
+    var features = map.queryRenderedFeatures(e.point);
+    map.getCanvas().style.cursor = '';
+    overlay.style.display = 'none';
+    popup.remove();
 });
 
 //accordion
@@ -119,8 +183,6 @@ map.addLayer({
 
   map.setFilter('segments_final-4isuhz', new_Filter);
 
-//$("#legend").val("");
-
 //legend
   var layers = ['0-20', '20-40', '40-60', '60-80', '80-100'];
   var colors = ["#000000", "#a2ef07", "#f6f913", "#ef8e26", "#f90021"];
@@ -135,6 +197,7 @@ map.addLayer({
   legend_holder.appendChild(legend_title);
   legend.appendChild(legend_holder);
 
+//dynamically serve legend elements
   for (i = 0; i < layers.length; i++) {
 
     var layer = layers[i];
@@ -151,42 +214,17 @@ map.addLayer({
     legend.appendChild(item);
     }
   }
-
 /*
 
 */
-
-/*
-var layers = ['0-10', '10-20', '20-50', '50-100', '100-200', '200-500', '500-1000', '1000+'];
-var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
-
-for (i = 0; i < layers.length; i++) {
-  var layer = layers[i];
-  var color = colors[i];
-  var item = document.createElement('div');
-  var key = document.createElement('span');
-  key.className = 'legend-key';
-  key.style.backgroundColor = color;
-
-  var value = document.createElement('span');
-  value.innerHTML = layer;
-  item.appendChild(key);
-  item.appendChild(value);
-  legend.appendChild(item);
-}
-
-*/
-
   });
 
 });
-$( "#traffic_sig" ).prop("checked", false);
+$( "#traffic_sig" ).prop("checked", true);
 $( "#traffic_sig" ).prop('disabled',false);
 
 var test =  function(element){ if($('#traffic_sig')[0].checked){
  console.log("true");
- overlay.appendChild(title);
- overlay.style.display = 'block';
 } else {
 console.log("false");
   }
@@ -196,21 +234,14 @@ console.log("false");
 $(document).ready(function(){
 test();
     $('#exampleModalCenter').modal('show');
- overlay.innerHTML = '';
 
- var data = map.queryRenderedFeatures();
-var overlay = document.getElementById('features');
- var title = document.createElement('strong');
- title.textContent = _.keys(_.pick(data[0].properties, "TrafficSig")) + ' : ' + _.values(_.pick(data[0].properties, "TrafficSig"));
+
 
 });
+
+
 /*
-map.on('mousemove', function (e) {
-    var features = map.queryRenderedFeatures(e.point);
-    document.getElementById('features').innerHTML = JSON.stringify(features, null, 2);
-});
-
-
+//reuse for individual clicked layers
 map.addLayer({
           "id": "segments_final-4isuhz",
           "type": "line",
@@ -222,50 +253,9 @@ map.addLayer({
             }
       });
 //map.querySourceFeatures('composite', {sourceLayer: 'segments_4_13-7evt4d'});
-map.setPaintProperty('segments_final-4isuhz', 'fill-color', ['interpolate',['linear'],
-  ['risk_score'], 1, '#00adef', 25, '#212529', 50, '#ea950b', 100, '#e94e34'])
 
   //var features = map.queryRenderedFeatures();
   //_.mapObject(features, function(obj) { return _.pick(obj.properties, 'risk_score')});
 
   //map.removeLayer("segments_final-4isuhz");
-  for (i = slideval1; i <= slideval2; i = i + 20){
-    segColor = lcolors[i];
-  var new_Filter = [
-      "all",
-    [">=", 'risk_score', i],
-    ["<=", 'risk_score',slideval2]
-  ];
-
-
-    map.addLayer({
-       "id": "segments_final-4isuhz",
-       "type": "line",
-       "source": 'composite',
-       "source-layer": "segments_final-4isuhz",
-       "filter": ["has","risk_score"],
-       "paint": {
-           //"line-color": `${segColor}`,
-           "line-color": [
-             "step",
-             ["get","risk_score"],
-             "#000000",
-             20,
-             "#a2ef07",
-             40,
-             "#f6f913",
-             60,
-             "#ef8e26",
-             80,
-             "#f90021"
-           ],
-           "line-width": 2.5
-       }
-    }); //console.log(new_Filter);
-
-//map.setFilter('segments_final-4isuhz', new_Filter);
-  }
-//map.setFilter('segments_final-4isuhz', new_Filter);
-
-
 */
