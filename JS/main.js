@@ -12,18 +12,13 @@ var map = new mapboxgl.Map({
     center: [-85.720872, 38.2570974],
     maxBounds: bounds
 });
-/*
-var overlay = document.getElementById('features');
-var title = document.createElement('strong');
-title.textContent = _.keys(_.pick(features[0].properties, "TrafficSig")) + ' : ' + feature.properties.TrafficSig;
-*/
+
+
+
 map.on('load', function() {
 /*
   map.removeLayer("segments_final-4isuhz");
 */
-
-
-
 
     // Create popup
     var popup = new mapboxgl.Popup({
@@ -124,12 +119,24 @@ map.addLayer({
 
   map.setFilter('segments_final-4isuhz', new_Filter);
 
+//$("#legend").val("");
 
 //legend
   var layers = ['0-20', '20-40', '40-60', '60-80', '80-100'];
   var colors = ["#000000", "#a2ef07", "#f6f913", "#ef8e26", "#f90021"];
 
+//remove previously created legend elements on change
+  var myNode = document.getElementById("legend");
+  while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild);
+  }
+  var legend_holder = document.createElement('span');
+  var legend_title = document.createTextNode("Legend");
+  legend_holder.appendChild(legend_title);
+  legend.appendChild(legend_holder);
+
   for (i = 0; i < layers.length; i++) {
+
     var layer = layers[i];
     var color = colors[i];
     var item = document.createElement('div');
@@ -143,13 +150,6 @@ map.addLayer({
     item.appendChild(value);
     legend.appendChild(item);
     }
-/*
-    value = document.createElement('span');
-    value.innerHTML = layer;
-    item.appendChild(key);
-    item.appendChild(value);
-    legend.appendChild(item);
-*/
   }
 
 /*
@@ -197,6 +197,11 @@ $(document).ready(function(){
 test();
     $('#exampleModalCenter').modal('show');
  overlay.innerHTML = '';
+
+ var data = map.queryRenderedFeatures();
+var overlay = document.getElementById('features');
+ var title = document.createElement('strong');
+ title.textContent = _.keys(_.pick(data[0].properties, "TrafficSig")) + ' : ' + _.values(_.pick(data[0].properties, "TrafficSig"));
 
 });
 /*
