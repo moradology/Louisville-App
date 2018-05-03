@@ -72,22 +72,16 @@ map.on('load', function() {
     "id": "streets",
     "type": "line",
     "source": 'composite',
+    "source-layer": "segments_final-4isuhz"
+  });
+
+  map.addLayer({
+    "id": "intersections",
+    "type": "line",
+    "source": 'composite',
     "source-layer": "segments_final-4isuhz",
     "paint": {
-      "line-color": [
-        "step",
-        ["get","risk_score"],
-        "#000000",
-        20,
-        "#a2ef07",
-        40,
-        "#f6f913",
-        60,
-        "#ef8e26",
-        80,
-        "#f90021"
-      ],
-      "line-width": 2.5
+      "line-color": ["step", ["get", "risk_score"], "#000000", 20, "#a2ef07", 40, "#f6f913", 60, "#ef8e26", 80, "#f90021"]
     }
   });
 
