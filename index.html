@@ -112,35 +112,14 @@
     </span>
     <div id="slider-range"></div><br>
 
-    <div id="accordion">
-    <h3>Built Environment</h3>
-    <div>
-      <p>
-      Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
-      </p>
-      <div>
-       <input type="checkbox" id="traffic_sig" name="subscribe" value="newsletter" class="position: relative; float: left;" onchange="test(this)">
-       <label for="subscribeNews">Has Traffic Signal</label>
-     </div>
-
-    </div>
-    <h3>Road Usage</h3>
-    <div>
-      <p>
-      Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
-      </p>
-    </div>
-    <h3>Location</h3>
-    <div>
-      <p>
-      Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
-      </p>
-    </div>
-    <h3>Network/Segment Characteristics</h3>
-    <div>
-      <p>
-      Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
-      </p>
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Dropdown button
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" id="TrafficSig" href="#">TrafficSig</a>
+      <a class="dropdown-item" id="ONEWAY" href="#">ONEWAY</a>
+      <a class="dropdown-item" id="BIKEWAY" href="#">BIKEWAY</a>
     </div>
   </div>
     </div>
@@ -154,6 +133,7 @@
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
     <script src="JS/jquery-ui.js"></script>
     <script src="JS/main.js"></script>
+    <script src="JS/button-behavior.js"></script>
     <script src="JS/underscore.js"></script>
 
   </body>
