@@ -13,14 +13,19 @@ var map = new mapboxgl.Map({
     maxBounds: bounds
 });
 
+var main_overlay = document.createElement('div');
+main_overlay.id ='features';
+var sub_overlay = document.createElement('div');
+sub_overlay.id ='features-title';
 var overlay = document.getElementById('features-title');
+
 
 $( "#slider-range" ).slider({
   range: false,
   min: 0,
   max: 100,
   values: [ 0, 100 ],
-  step: 20,
+  step: 1,
   slide: function( event, ui ) {
     if ( ( ui.values[ 0 ] ) > ui.values[ 1 ] ) { return false; }
     $( "#amount" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ]  );
@@ -31,14 +36,14 @@ $( "#amount" ).val( $( "#slider-range" ).slider( "values", 0 ) + " - " + $( "#sl
 
 $("#slider-range" ).slider({
   change: function(event, ui) {
-    map.setFilter("streets", ["all", [">=", 'risk_score', ui.values[0]], ["<=", 'risk_score', ui.values[1]]]);
+    map.setFilter("intersections", ["all", [">=", 'risk_score', ui.values[0]], ["<=", 'risk_score', ui.values[1]]]);
   }
 });
 
 
 //legend
-var layers = ['0-20', '20-40', '40-60', '60-80', '80-100'];
-var colors = ["#000000", "#a2ef07", "#f6f913", "#ef8e26", "#f90021"];
+var layers = ['0-2', '2-4', '4-14', '14-34', '34-100'];
+var colors = ["#460587 ","#1048b7","#0fb1b7","#0fb781","#dae510"];
 
 //remove previously created legend elements on change
 var myNode = document.getElementById("legend");
@@ -46,7 +51,7 @@ while (myNode.firstChild) {
   myNode.removeChild(myNode.firstChild);
 }
 var legend_holder = document.createElement('span');
-var legend_title = document.createTextNode("Legend");
+var legend_title = document.createTextNode("Risk Score");
 legend_holder.appendChild(legend_title);
 legend.appendChild(legend_holder);
 
@@ -81,7 +86,7 @@ map.on('load', function() {
     "source": 'composite',
     "source-layer": "segments_final-4isuhz",
     "paint": {
-      "line-color": ["step", ["get", "risk_score"], "#000000", 20, "#a2ef07", 40, "#f6f913", 60, "#ef8e26", 80, "#f90021"]
+      "line-color": ["step", ["get", "risk_score"], "#460587 ", 2, "#1048b7", 4, "#0fb1b7", 14, "#0fb781", 34, "#dae510"]
     }
   });
 
@@ -89,30 +94,11 @@ map.on('load', function() {
 
   // Create popup
   var popup = new mapboxgl.Popup({
-      closeButton: false,
+      closeButton: true,
       closeOnClick: false
   });
 
-
-  map.on('mousemove', 'streets', function(e) {
-    // Change the cursor style as a UI indicator.
-    map.getCanvas().style.cursor = 'pointer';
-
-    //reminder: can filter by groups on right with if/then logic like commented above
-    overlay.innerHTML = 'Selected Features';
-    var feature = e.features[0].properties;
-    var pairs = _.pairs(feature);
-    for (i = 0; i < pairs.length; i++) {
-      var entry = document.createElement('div');
-      var text = pairs[i][0] + ' : ' + pairs[i][1];
-      console.log(text);
-      entry.textContent = `${text}`;
-      overlay.appendChild(entry);
-      overlay.style.display = 'block';
-    }
-  });
-
-  map.on('mouseenter', 'streets', function(e) {
+  map.on('click', 'streets', function (e) {
     // Change the cursor style as a UI indicator.
     map.getCanvas().style.cursor = 'pointer';
 
@@ -129,17 +115,50 @@ map.on('load', function() {
     // Populate the popup and set its coordinates
     // based on the feature found.
     popup.setLngLat(coordinates)
-        .setHTML("Collisions in 2017: " +  description) //fix this
+        .setHTML("Selected Segment")
         .addTo(map);
   });
 
-  //data to show in top right
-  map.on('mouseleave', function (e) {
-      var features = map.queryRenderedFeatures(e.point);
+  var close_button = document.createElement('div');
+  var myButton = document.getElementById("close-features");
+  var close = close_button.appendChild(myButton);
+
+  map.on('click', 'streets', function (e) {
+
+var container main_overlay.appendChild(close_button);
+var container1 container.appendChild(myButton)
+
+        var myNode = document.getElementById("features-title");
+        while (myNode.firstChild) {
+          myNode.removeChild(myNode.firstChild);}
+
+        overlay.style.fontWeight = 'bold';
+
+        var feature = e.features[0].properties;
+        var pairs = _.pairs(feature);
+
+        for (i = 0; i < pairs.length; i++) {
+          var entry = document.createElement('div');
+          var text = pairs[i][0] + ' : ' + pairs[i][1];
+          entry.textContent = `${text}`;
+
+          main_overlay.appendChild(container1);
+          overlay.appendChild(entry);
+          overlay.style.display = 'block';
+          overlay.style.padding = '10px';
+          overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    }
+//var parentDiv = document.getElementById("features-title");
+//overlay.parentDiv.insertBefore(myButton, sub_overlay);
+  });
+  // Change the cursor to a pointer when the mouse is over the places layer.
+  map.on('mouseenter', 'streets', function () {
+      map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to a pointer when it leaves.
+  map.on('mouseleave', 'streets', function () {
       map.getCanvas().style.cursor = '';
-      overlay.style.display = 'none';
-      popup.remove();
   });
 
 });
-
